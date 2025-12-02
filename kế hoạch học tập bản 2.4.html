@@ -1,0 +1,2579 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Lập Kế Hoạch Học Tập Khoa Học</title>
+    <!-- Thêm favicon -->
+    <link rel="icon" type="image/png" href="biểu%20tượng%20trang%20web.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset và biến CSS */
+        :root {
+            --primary-color: #ff3366;
+            --secondary-color: #cc0044;
+            --accent-color: #ff6699;
+            --success-color: #4cc9f0;
+            --warning-color: #f8961e;
+            --danger-color: #ef476f;
+            --light-bg: #fff5f7;
+            --dark-bg: #2c0b16;
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #ffd6e0;
+            --shadow: 0 5px 15px rgba(255, 51, 102, 0.1);
+            --gradient-bg: linear-gradient(135deg, #ffffff 0%, #fff5f7 50%, #ffe6ec 100%);
+            --header-gradient: linear-gradient(135deg, #ff3366 0%, #cc0044 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* Container chính */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(255, 51, 102, 0.15);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            animation: pageLoad 0.6s ease-out;
+        }
+        
+        @keyframes pageLoad {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Header */
+        .header {
+            background: var(--header-gradient);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        /* Main layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 800px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--light-bg);
+            padding: 25px;
+            border-right: 1px solid var(--border-color);
+        }
+        
+        /* User Profile */
+        .user-profile {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .avatar-container:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+        
+        .avatar-container:hover .avatar-overlay {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: var(--shadow);
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 51, 102, 0.3);
+        }
+        
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .avatar-input {
+            display: none;
+        }
+        
+        .user-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .user-id {
+            background: var(--secondary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        /* Navigation */
+        .nav-menu {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .nav-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            box-shadow: 0 3px 8px rgba(255, 51, 102, 0.05);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-menu a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-menu a:hover::before {
+            width: 100%;
+        }
+        
+        .nav-menu a:hover, .nav-menu a.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 1.2em;
+            width: 25px;
+            text-align: center;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(255, 51, 102, 0.05);
+            border: 1px solid var(--border-color);
+        }
+        
+        .quick-stats h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        /* Main content */
+        .main-content {
+            padding: 30px;
+            background: white;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tab:hover {
+            background: var(--light-bg);
+            transform: translateY(-2px);
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        /* Tab content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Forms */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.1);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        /* Priority selector */
+        .priority-selector {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .priority-option {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .priority-option input[type="radio"] {
+            display: none;
+        }
+        
+        .priority-option label {
+            display: block;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .priority-option input[type="radio"]:checked + label {
+            border-color: var(--primary-color);
+            background: rgba(255, 51, 102, 0.1);
+            font-weight: bold;
+        }
+        
+        .priority-high label { color: var(--danger-color); }
+        .priority-medium label { color: var(--warning-color); }
+        .priority-low label { color: var(--success-color); }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 51, 102, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(255, 51, 102, 0.2);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background: #ff99b8;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #ff6699;
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 2px solid var(--border-color);
+        }
+        
+        /* Study Plan Table */
+        .study-plan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .study-plan-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .study-plan-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .study-plan-table tr {
+            transition: all 0.3s ease;
+        }
+        
+        .study-plan-table tr:hover {
+            background: var(--light-bg);
+            transform: translateX(5px);
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .priority-high-badge {
+            background: rgba(239, 71, 111, 0.2);
+            color: var(--danger-color);
+        }
+        
+        .priority-medium-badge {
+            background: rgba(248, 150, 30, 0.2);
+            color: var(--warning-color);
+        }
+        
+        .priority-low-badge {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success-color);
+        }
+        
+        /* Progress tracker */
+        .progress-tracker {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .progress-item {
+            margin-bottom: 20px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #ffe6ec;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        /* Calendar */
+        .calendar {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        
+        .calendar-day {
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            background: var(--light-bg);
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .calendar-date {
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-date:hover {
+            background: var(--light-bg);
+            transform: scale(1.05);
+        }
+        
+        .calendar-date.has-study {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            background: var(--dark-bg);
+            color: white;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #ff99b8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: center;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Message */
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .message.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            border: 1px solid #2ecc71;
+        }
+        
+        .message.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+            border: 1px solid #e74c3c;
+        }
+        
+        /* Study Tips */
+        .study-tips {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .study-tips h3 {
+            margin-bottom: 15px;
+        }
+        
+        .study-tips ul {
+            margin-left: 20px;
+        }
+        
+        .study-tips li {
+            margin-bottom: 10px;
+        }
+        
+        /* Custom CSS for subject management */
+        .subject-manager {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 1024px) {
+            .subject-manager {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .subject-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .subject-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .subject-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+        
+        .subject-item:hover {
+            background: #ffe6ec;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.15);
+        }
+        
+        .subject-info h4 {
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .subject-info p {
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+        
+        .subject-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85em;
+        }
+        
+        .subject-form {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Color picker for subjects */
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        
+        .color-option.selected {
+            border-color: var(--dark-bg);
+        }
+        
+        /* Quick add subject in study plan */
+        .subject-select-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .quick-add-btn {
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--light-bg);
+            color: var(--primary-color);
+            border: 1px dashed var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-add-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* Background patterns */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .bg-pattern-1 {
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 51, 102, 0.2) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(255, 102, 153, 0.2) 0%, transparent 20%),
+                              radial-gradient(circle at 50% 50%, rgba(204, 0, 68, 0.1) 0%, transparent 30%);
+        }
+        
+        /* Ripple animation */
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Pattern -->
+    <div class="bg-pattern bg-pattern-1"></div>
+    
+    <!-- Loading Screen -->
+    <div id="loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--gradient-bg); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease;">
+        <div style="text-align: center;">
+            <div style="width: 60px; height: 60px; border: 5px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <p style="color: var(--primary-color); font-weight: bold; font-size: 1.2em;">Đang tải hệ thống...</p>
+        </div>
+    </div>
+    
+    <!-- Modal xem ảnh lớn -->
+    <div id="avatarViewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="position: relative; max-width: 90%; max-height: 90%;">
+            <img id="avatarLarge" src="" style="max-width: 100%; max-height: 90vh; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <button class="btn btn-primary" onclick="closeAvatarView()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); color: white; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-times"></i>
+            </button>
+            <div style="position: absolute; bottom: 20px; left: 0; right: 0; text-align: center;">
+                <button class="btn btn-primary" onclick="changeAvatar()" style="margin-right: 10px;">
+                    <i class="fas fa-camera"></i> Đổi ảnh
+                </button>
+                <button class="btn btn-secondary" onclick="closeAvatarView()">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1>📚 Hệ Thống Lập Kế Hoạch Học Tập Khoa Học</h1>
+                <p>Tối ưu hóa thời gian học tập - Ưu tiên việc học - Đạt mục tiêu học tập</p>
+                <div id="motivational-quote" style="font-style: italic; margin-top: 15px; padding: 10px 20px; background: rgba(255,255,255,0.2); border-radius: 10px; backdrop-filter: blur(5px); border-left: 4px solid rgba(255,255,255,0.5); animation: fadeIn 1s ease;"></div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-study-hours">0</div>
+                        <div class="stat-label">Giờ học đã lên kế hoạch</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="completed-tasks">0</div>
+                        <div class="stat-label">Nhiệm vụ đã hoàn thành</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="study-efficiency">0%</div>
+                        <div class="stat-label">Hiệu suất học tập</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- User Profile -->
+                <div class="user-profile">
+                    <div class="avatar-container">
+                        <div class="avatar" id="user-avatar" onclick="viewAvatar()">
+                            <!-- Avatar content will be set by JavaScript -->
+                        </div>
+                        <div class="avatar-overlay" onclick="changeAvatar()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <input type="file" id="avatar-input" class="avatar-input" accept="image/*">
+                    </div>
+                    <div class="user-name" id="user-name">Sinh Viên</div>
+                    <div class="user-id" id="user-id">ID: STU-001</div>
+                    <p>Chuyên ngành: <span id="user-major">Chưa cập nhật</span></p>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <ul class="nav-menu">
+                    <li><a href="#" class="active" data-tab="profile">
+                        <span class="nav-icon"><i class="fas fa-user"></i></span>
+                        <span>Thông tin cá nhân</span>
+                    </a></li>
+                    <li><a href="#" data-tab="study-plan">
+                        <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+                        <span>Kế hoạch học tập</span>
+                    </a></li>
+                    <li><a href="#" data-tab="subjects">
+                        <span class="nav-icon"><i class="fas fa-book"></i></span>
+                        <span>Môn học</span>
+                    </a></li>
+                    <li><a href="#" data-tab="progress">
+                        <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
+                        <span>Theo dõi tiến độ</span>
+                    </a></li>
+                    <li><a href="#" data-tab="calendar">
+                        <span class="nav-icon"><i class="fas fa-calendar-day"></i></span>
+                        <span>Lịch học</span>
+                    </a></li>
+                </ul>
+                
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <h3>📊 Thống kê nhanh</h3>
+                    <p><i class="fas fa-clock"></i> Hôm nay: <span id="today-study">0</span> giờ</p>
+                    <p><i class="fas fa-tasks"></i> Nhiệm vụ: <span id="pending-tasks">0</span> còn lại</p>
+                    <p><i class="fas fa-fire"></i> Ngày học liên tiếp: <span id="streak-days">0</span></p>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Tabs Navigation -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="profile">Thông tin cá nhân</div>
+                    <div class="tab" data-tab="study-plan">Kế hoạch học tập</div>
+                    <div class="tab" data-tab="subjects">Quản lý môn học</div>
+                    <div class="tab" data-tab="progress">Theo dõi tiến độ</div>
+                    <div class="tab" data-tab="calendar">Lịch học</div>
+                </div>
+                
+                <!-- Message Area -->
+                <div class="message" id="message"></div>
+                
+                <!-- Tab Contents -->
+                
+                <!-- Profile Tab -->
+                <div class="tab-content active" id="profile-tab">
+                    <h2 class="section-title">👤 Thông tin cá nhân</h2>
+                    
+                    <div class="form-container">
+                        <div class="form-group">
+                            <label for="fullName">Họ và tên *</label>
+                            <input type="text" id="fullName" class="form-control" placeholder="Nhập họ và tên đầy đủ">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="studentId">Mã sinh viên</label>
+                                <input type="text" id="studentId" class="form-control" placeholder="SV20240001">
+                            </div>
+                            <div class="form-group">
+                                <label for="major">Chuyên ngành</label>
+                                <select id="major" class="form-control">
+                                    <option value="">Chọn chuyên ngành</option>
+                                    <option value="cntt">Công nghệ thông tin</option>
+                                    <option value="kt">Kinh tế</option>
+                                    <option value="y">Y học</option>
+                                    <option value="luat">Luật</option>
+                                    <option value="khac">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" class="form-control" placeholder="email@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Số điện thoại</label>
+                                <input type="tel" id="phone" class="form-control" placeholder="0123 456 789">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studyGoals">Mục tiêu học tập</label>
+                            <textarea id="studyGoals" class="form-control" rows="4" placeholder="Mô tả mục tiêu học tập của bạn..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Mức độ ưu tiên học tập</label>
+                            <div class="priority-selector">
+                                <div class="priority-option priority-high">
+                                    <input type="radio" id="priority-high" name="studyPriority" value="high">
+                                    <label for="priority-high">Cao nhất</label>
+                                </div>
+                                <div class="priority-option priority-medium">
+                                    <input type="radio" id="priority-medium" name="studyPriority" value="medium" checked>
+                                    <label for="priority-medium">Trung bình</label>
+                                </div>
+                                <div class="priority-option priority-low">
+                                    <input type="radio" id="priority-low" name="studyPriority" value="low">
+                                    <label for="priority-low">Thấp</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="saveProfile()" id="save-profile-btn">
+                            <i class="fas fa-save"></i> Lưu thông tin
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Study Plan Tab -->
+                <div class="tab-content" id="study-plan-tab">
+                    <h2 class="section-title">📅 Tạo kế hoạch học tập</h2>
+                    
+                    <div class="form-container">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subjectSelect">Môn học *</label>
+                                <div class="subject-select-wrapper">
+                                    <select id="subjectSelect" class="form-control">
+                                        <option value="">Chọn môn học</option>
+                                    </select>
+                                    <button class="quick-add-btn" onclick="showQuickAddSubject()" title="Thêm môn học nhanh">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="studyDate">Ngày học *</label>
+                                <input type="date" id="studyDate" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="startTime">Thời gian bắt đầu *</label>
+                                <input type="time" id="startTime" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="endTime">Thời gian kết thúc *</label>
+                                <input type="time" id="endTime" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studyTopic">Chủ đề/Nội dung học</label>
+                            <input type="text" id="studyTopic" class="form-control" placeholder="Ví dụ: Chương 3 - Đạo hàm">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Mức độ ưu tiên</label>
+                            <div class="priority-selector">
+                                <div class="priority-option priority-high">
+                                    <input type="radio" id="plan-priority-high" name="planPriority" value="high">
+                                    <label for="plan-priority-high">Cao</label>
+                                </div>
+                                <div class="priority-option priority-medium">
+                                    <input type="radio" id="plan-priority-medium" name="planPriority" value="medium" checked>
+                                    <label for="plan-priority-medium">Trung bình</label>
+                                </div>
+                                <div class="priority-option priority-low">
+                                    <input type="radio" id="plan-priority-low" name="planPriority" value="low">
+                                    <label for="plan-priority-low">Thấp</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studyNotes">Ghi chú</label>
+                            <textarea id="studyNotes" class="form-control" rows="3" placeholder="Ghi chú về buổi học..."></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="addStudyPlan()">
+                            <i class="fas fa-plus"></i> Thêm vào kế hoạch
+                        </button>
+                    </div>
+                    
+                    <!-- Current Study Plans -->
+                    <div style="margin-top: 50px;">
+                        <h3 class="section-title">Kế hoạch học tập hiện tại</h3>
+                        <table class="study-plan-table">
+                            <thead>
+                                <tr>
+                                    <th>Môn học</th>
+                                    <th>Ngày</th>
+                                    <th>Thời gian</th>
+                                    <th>Nội dung</th>
+                                    <th>Ưu tiên</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="study-plan-list">
+                                <!-- Plans will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Subjects Tab -->
+                <div class="tab-content" id="subjects-tab">
+                    <h2 class="section-title">📚 Quản lý môn học</h2>
+                    
+                    <div class="subject-manager">
+                        <!-- Current Subjects List -->
+                        <div class="subject-card">
+                            <h3>Danh sách môn học của bạn</h3>
+                            <div id="subjects-container">
+                                <!-- Subjects will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Add/Edit Subject Form -->
+                        <div class="subject-form">
+                            <h3 id="subject-form-title">Thêm môn học mới</h3>
+                            
+                            <div class="form-group">
+                                <label for="editSubjectName">Tên môn học *</label>
+                                <input type="text" id="editSubjectName" class="form-control" placeholder="Ví dụ: Toán cao cấp">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editSubjectCode">Mã môn học</label>
+                                    <input type="text" id="editSubjectCode" class="form-control" placeholder="MATH101">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editSubjectCredits">Số tín chỉ</label>
+                                    <input type="number" id="editSubjectCredits" class="form-control" min="1" max="10" value="3">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editSubjectDifficulty">Độ khó</label>
+                                    <select id="editSubjectDifficulty" class="form-control">
+                                        <option value="easy">Dễ</option>
+                                        <option value="medium" selected>Trung bình</option>
+                                        <option value="hard">Khó</option>
+                                        <option value="very-hard">Rất khó</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editSubjectColor">Màu sắc môn học</label>
+                                    <div class="color-picker">
+                                        <div class="color-option" style="background-color: #ff3366;" data-color="#ff3366"></div>
+                                        <div class="color-option" style="background-color: #cc0044;" data-color="#cc0044"></div>
+                                        <div class="color-option" style="background-color: #ff6699;" data-color="#ff6699"></div>
+                                        <div class="color-option" style="background-color: #ff99b8;" data-color="#ff99b8"></div>
+                                        <div class="color-option" style="background-color: #f8961e;" data-color="#f8961e"></div>
+                                        <div class="color-option" style="background-color: #4cc9f0;" data-color="#4cc9f0"></div>
+                                    </div>
+                                    <input type="hidden" id="editSubjectColor" value="#ff3366">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editSubjectDescription">Mô tả môn học</label>
+                                <textarea id="editSubjectDescription" class="form-control" rows="3" placeholder="Mô tả ngắn về môn học..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editSubjectTeacher">Giảng viên</label>
+                                <input type="text" id="editSubjectTeacher" class="form-control" placeholder="Tên giảng viên">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editSubjectSchedule">Lịch học (nếu có)</label>
+                                <input type="text" id="editSubjectSchedule" class="form-control" placeholder="Ví dụ: T2, T4, T6 từ 8-10h">
+                            </div>
+                            
+                            <div class="btn-group">
+                                <button class="btn btn-secondary" onclick="resetSubjectForm()">
+                                    <i class="fas fa-times"></i> Hủy
+                                </button>
+                                <button class="btn btn-primary" onclick="saveSubject()">
+                                    <i class="fas fa-save"></i> Lưu môn học
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subjects Stats -->
+                    <div class="quick-stats" style="margin-top: 30px;">
+                        <h3>📊 Thống kê môn học</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <p>Tổng số môn học: <span id="total-subjects">0</span></p>
+                            </div>
+                            <div class="form-group">
+                                <p>Tổng số tín chỉ: <span id="total-credits">0</span></p>
+                            </div>
+                            <div class="form-group">
+                                <p>Môn khó nhất: <span id="hardest-subject">Chưa có</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Tab -->
+                <div class="tab-content" id="progress-tab">
+                    <h2 class="section-title">📈 Theo dõi tiến độ học tập</h2>
+                    
+                    <div class="progress-tracker">
+                        <h3>Tiến độ học tập theo môn</h3>
+                        <div id="progress-container">
+                            <!-- Progress bars will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div class="study-tips">
+                        <h3>💡 Mẹo học tập khoa học</h3>
+                        <ul>
+                            <li>Áp dụng phương pháp Pomodoro: 25 phút học - 5 phút nghỉ</li>
+                            <li>Ưu tiên học vào buổi sáng (6-10h) khi não bộ tỉnh táo nhất</li>
+                            <li>Ôn tập kiến thức trong vòng 24 giờ sau khi học</li>
+                            <li>Ngủ đủ 7-8 tiếng mỗi đêm để củng cố trí nhớ</li>
+                            <li>Tập thể dục nhẹ trước khi học giúp tăng tập trung</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Calendar Tab -->
+                <div class="tab-content" id="calendar-tab">
+                    <h2 class="section-title">🗓️ Lịch học tập</h2>
+                    
+                    <div class="calendar">
+                        <div class="calendar-header">
+                            <h3 id="current-month">Tháng 1, 2024</h3>
+                            <div>
+                                <button class="btn btn-secondary" onclick="changeMonth(-1)">
+                                    <i class="fas fa-chevron-left"></i> Tháng trước
+                                </button>
+                                <button class="btn btn-secondary" onclick="changeMonth(1)" style="margin-left: 10px;">
+                                    Tháng sau <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="calendar-grid" id="calendar-days">
+                            <!-- Calendar will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; text-align: center;">
+                        <p><i class="fas fa-info-circle"></i> Nhấn vào ngày có viền màu xanh để xem kế hoạch học tập chi tiết</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-links">
+                <a href="#" onclick="showTab('profile')">Hướng dẫn sử dụng</a>
+                <a href="#" onclick="showTab('progress')">Mẹo học tập</a>
+                <a href="#" onclick="exportData()">Xuất dữ liệu</a>
+                <a href="#" onclick="importData()">Nhập dữ liệu</a>
+                <a href="#" onclick="resetData()">Đặt lại</a>
+            </div>
+            <p>Hệ thống lập kế hoạch học tập khoa học © 2024</p>
+            <p>Dữ liệu được lưu trữ cục bộ trên trình duyệt của bạn</p>
+        </div>
+    </div>
+
+    <!-- Quick Add Subject Modal -->
+    <div id="quickAddModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px;">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">Thêm môn học nhanh</h3>
+            <div class="form-group">
+                <label for="quickSubjectName">Tên môn học *</label>
+                <input type="text" id="quickSubjectName" class="form-control" placeholder="Ví dụ: Toán cao cấp">
+            </div>
+            <div class="form-group">
+                <label for="quickSubjectCode">Mã môn học (tùy chọn)</label>
+                                <input type="text" id="quickSubjectCode" class="form-control" placeholder="MATH101">
+            </div>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="hideQuickAddModal()">
+                    <i class="fas fa-times"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="addQuickSubject()">
+                    <i class="fas fa-plus"></i> Thêm và chọn
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu lưu trữ
+        let userData = {
+            profile: {
+                fullName: "",
+                studentId: "",
+                major: "",
+                email: "",
+                phone: "",
+                studyGoals: "",
+                studyPriority: "medium",
+                avatar: null
+            },
+            subjects: [],
+            studyPlans: [],
+            progress: {},
+            settings: {
+                lastLogin: null,
+                streakDays: 0,
+                totalStudyHours: 0
+            }
+        };
+        
+        // Mảng các câu nói cổ vũ
+        const motivationalQuotes = [
+            "Học tập là chìa khóa mở cửa tương lai!",
+            "Không bao giờ là quá muộn để học một điều gì đó mới!",
+            "Học, học nữa, học mãi!",
+            "Thành công bắt đầu từ sự chăm chỉ!",
+            "Hôm nay học tập, ngày mai thành công!",
+            "Kiến thức là sức mạnh!",
+            "Hãy học như thể bạn sẽ sống mãi mãi!",
+            "Đầu tư vào kiến thức luôn mang lại lợi ích tốt nhất!",
+            "Học tập là hành trình suốt đời!",
+            "Mỗi ngày học một điều mới là một ngày có ích!",
+            "Thất bại là cơ hội để bắt đầu lại một cách thông minh hơn!",
+            "Đừng sợ thất bại, hãy sợ việc không dám thử!",
+            "Kiên nhẫn và kiên trì sẽ chiến thắng tất cả!",
+            "Học từ ngày hôm qua, sống cho ngày hôm nay, hy vọng cho ngày mai!"
+        ];
+        
+        // Biến global
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let editingSubjectId = null;
+        
+        // Khởi tạo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ẩn loading sau 1 giây
+            setTimeout(() => {
+                const loading = document.getElementById('loading');
+                loading.style.opacity = '0';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 500);
+            }, 1000);
+            
+            loadData();
+            updateUI();
+            generateCalendar();
+            setupEventListeners();
+            setupColorPicker();
+            setupAvatarUpload();
+            setupRippleEffects();
+            showRandomMotivationalQuote();
+            
+            // Set ngày mặc định cho form
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            document.getElementById('studyDate').valueAsDate = tomorrow;
+            document.getElementById('startTime').value = "08:00";
+            document.getElementById('endTime').value = "10:00";
+        });
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.tab, .nav-menu a').forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tab = this.dataset.tab;
+                    showTab(tab);
+                    
+                    // Thêm hiệu ứng click cho tab
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+            
+            // Auto-save profile on change
+            document.querySelectorAll('#profile-tab input, #profile-tab select, #profile-tab textarea').forEach(element => {
+                element.addEventListener('change', function() {
+                    saveProfile();
+                });
+            });
+        }
+        
+        // Setup ripple effects cho tất cả các nút
+        function setupRippleEffects() {
+            document.addEventListener('click', function(e) {
+                const btn = e.target.closest('.btn');
+                if (btn && !btn.classList.contains('no-ripple')) {
+                    const rect = btn.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size/2;
+                    const y = e.clientY - rect.top - size/2;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.7);
+                        transform: scale(0);
+                        animation: ripple-animation 0.6s linear;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        pointer-events: none;
+                    `;
+                    
+                    btn.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                }
+            });
+        }
+        
+        // Hiển thị câu nói cổ vũ ngẫu nhiên
+        function showRandomMotivationalQuote() {
+            const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
+            const quote = motivationalQuotes[randomIndex];
+            document.getElementById('motivational-quote').textContent = `"${quote}"`;
+        }
+        
+        // Setup avatar upload
+        function setupAvatarUpload() {
+            const avatarInput = document.getElementById('avatar-input');
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                        showMessage("Kích thước ảnh quá lớn. Vui lòng chọn ảnh nhỏ hơn 5MB.", "error");
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        userData.profile.avatar = event.target.result;
+                        updateAvatar();
+                        saveData();
+                        showMessage("Đã cập nhật ảnh đại diện thành công!", "success");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Update avatar display
+        function updateAvatar() {
+            const avatarEl = document.getElementById('user-avatar');
+            
+            if (userData.profile.avatar) {
+                // Hiển thị ảnh từ base64
+                avatarEl.innerHTML = '';
+                avatarEl.style.backgroundImage = `url('${userData.profile.avatar}')`;
+                avatarEl.style.backgroundSize = 'cover';
+                avatarEl.style.backgroundPosition = 'center';
+                avatarEl.style.cursor = 'pointer';
+                
+                // Thêm sự kiện click để xem ảnh lớn
+                avatarEl.onclick = function(e) {
+                    e.stopPropagation();
+                    viewAvatar();
+                };
+            } else {
+                // Hiển thị chữ cái đầu của tên
+                avatarEl.style.backgroundImage = 'none';
+                const profile = userData.profile;
+                if (profile.fullName) {
+                    const initials = profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                    avatarEl.textContent = initials.substring(0, 2);
+                    avatarEl.style.backgroundColor = '#ff3366';
+                    avatarEl.style.color = 'white';
+                    avatarEl.style.display = 'flex';
+                    avatarEl.style.alignItems = 'center';
+                    avatarEl.style.justifyContent = 'center';
+                    avatarEl.style.cursor = 'pointer';
+                    
+                    avatarEl.onclick = function(e) {
+                        e.stopPropagation();
+                        document.getElementById('avatar-input').click();
+                    };
+                } else {
+                    avatarEl.innerHTML = '<i class="fas fa-user"></i>';
+                    avatarEl.style.backgroundColor = '#ff3366';
+                    avatarEl.style.color = 'white';
+                    avatarEl.style.display = 'flex';
+                    avatarEl.style.alignItems = 'center';
+                    avatarEl.style.justifyContent = 'center';
+                    avatarEl.style.cursor = 'pointer';
+                    
+                    avatarEl.onclick = function(e) {
+                        e.stopPropagation();
+                        document.getElementById('avatar-input').click();
+                    };
+                }
+            }
+            
+            // Cập nhật overlay để đổi ảnh
+            const avatarOverlay = document.querySelector('.avatar-overlay');
+            avatarOverlay.onclick = function(e) {
+                e.stopPropagation();
+                document.getElementById('avatar-input').click();
+            };
+        }
+        
+        // Hàm xem ảnh lớn
+        function viewAvatar() {
+            if (userData.profile.avatar) {
+                document.getElementById('avatarLarge').src = userData.profile.avatar;
+                document.getElementById('avatarViewModal').style.display = 'flex';
+            } else {
+                document.getElementById('avatar-input').click();
+            }
+        }
+        
+        // Hàm đóng modal xem ảnh
+        function closeAvatarView() {
+            document.getElementById('avatarViewModal').style.display = 'none';
+        }
+        
+        // Hàm đổi avatar từ modal
+        function changeAvatar() {
+            closeAvatarView();
+            setTimeout(() => {
+                document.getElementById('avatar-input').click();
+            }, 300);
+        }
+        
+        // Setup color picker
+        function setupColorPicker() {
+            const colorOptions = document.querySelectorAll('.color-option');
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    colorOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Update hidden input
+                    const color = this.getAttribute('data-color');
+                    document.getElementById('editSubjectColor').value = color;
+                });
+            });
+            
+            // Select first color by default
+            if (colorOptions.length > 0) {
+                colorOptions[0].classList.add('selected');
+            }
+        }
+        
+        // Load dữ liệu từ localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('studyPlannerData');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+                
+                // Load profile data
+                if (userData.profile) {
+                    document.getElementById('fullName').value = userData.profile.fullName || '';
+                    document.getElementById('studentId').value = userData.profile.studentId || '';
+                    document.getElementById('major').value = userData.profile.major || '';
+                    document.getElementById('email').value = userData.profile.email || '';
+                    document.getElementById('phone').value = userData.profile.phone || '';
+                    document.getElementById('studyGoals').value = userData.profile.studyGoals || '';
+                    
+                    // Set priority radio
+                    const priorityRadio = document.querySelector(`input[name="studyPriority"][value="${userData.profile.studyPriority || 'medium'}"]`);
+                    if (priorityRadio) priorityRadio.checked = true;
+                }
+                
+                // Update streak days
+                updateStreakDays();
+            } else {
+                // Dữ liệu mẫu nếu không có dữ liệu
+                initializeSampleData();
+            }
+        }
+        
+        // Khởi tạo dữ liệu mẫu
+        function initializeSampleData() {
+            userData.subjects = [
+                { 
+                    id: 1, 
+                    name: "Toán cao cấp", 
+                    code: "MATH101", 
+                    credits: 3, 
+                    difficulty: "hard", 
+                    color: "#ff3366",
+                    teacher: "Nguyễn Văn A",
+                    schedule: "T2, T4 từ 8-10h",
+                    description: "Môn học về giải tích và đại số",
+                    studyHours: 0 
+                },
+                { 
+                    id: 2, 
+                    name: "Lập trình C++", 
+                    code: "PROG101", 
+                    credits: 4, 
+                    difficulty: "medium", 
+                    color: "#cc0044",
+                    teacher: "Trần Thị B",
+                    schedule: "T3, T5 từ 14-16h",
+                    description: "Môn học lập trình cơ bản với C++",
+                    studyHours: 0 
+                },
+                { 
+                    id: 3, 
+                    name: "Tiếng Anh chuyên ngành", 
+                    code: "ENG201", 
+                    credits: 2, 
+                    difficulty: "easy", 
+                    color: "#ff6699",
+                    teacher: "Lê Văn C",
+                    schedule: "T6 từ 9-11h",
+                    description: "Tiếng Anh cho chuyên ngành CNTT",
+                    studyHours: 0 
+                }
+            ];
+            
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            userData.studyPlans = [
+                { 
+                    id: 1, 
+                    subjectId: 1, 
+                    date: tomorrow.toISOString().split('T')[0], 
+                    startTime: "08:00", 
+                    endTime: "10:00", 
+                    topic: "Chương 3 - Đạo hàm", 
+                    priority: "high", 
+                    notes: "Ôn tập cho bài kiểm tra giữa kỳ", 
+                    completed: false 
+                },
+                { 
+                    id: 2, 
+                    subjectId: 2, 
+                    date: tomorrow.toISOString().split('T')[0], 
+                    startTime: "14:00", 
+                    endTime: "16:00", 
+                    topic: "Con trỏ và hàm", 
+                    priority: "medium", 
+                    notes: "Làm bài tập về nhà", 
+                    completed: false 
+                }
+            ];
+            
+            saveData();
+        }
+        
+        // Save dữ liệu vào localStorage
+        function saveData() {
+            localStorage.setItem('studyPlannerData', JSON.stringify(userData));
+            showMessage("Dữ liệu đã được lưu thành công!", "success");
+        }
+        
+        // Hiển thị thông báo
+        function showMessage(text, type = "success") {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Cập nhật UI
+        function updateUI() {
+            // Cập nhật thông tin người dùng
+            const profile = userData.profile;
+            document.getElementById('user-name').textContent = profile.fullName || "Sinh Viên";
+            document.getElementById('user-id').textContent = `ID: ${profile.studentId || "STU-001"}`;
+            document.getElementById('user-major').textContent = profile.major || "Chưa cập nhật";
+            
+            // Cập nhật avatar
+            updateAvatar();
+            
+            // Cập nhật danh sách môn học trong select
+            updateSubjectSelect();
+            
+            // Cập nhật danh sách kế hoạch học tập
+            updateStudyPlanList();
+            
+            // Cập nhật danh sách môn học
+            updateSubjectsList();
+            
+            // Cập nhật tiến độ
+            updateProgress();
+            
+            // Cập nhật thống kê
+            updateStats();
+            
+            // Cập nhật thống kê môn học
+            updateSubjectStats();
+            
+            // Cập nhật calendar
+            generateCalendar();
+        }
+        
+        // Lưu thông tin cá nhân
+        function saveProfile() {
+            const saveBtn = document.querySelector('#profile-tab .btn-primary');
+            const originalText = saveBtn.innerHTML;
+            
+            // Hiệu ứng loading trên nút
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+            saveBtn.disabled = true;
+            
+            setTimeout(() => {
+                userData.profile = {
+                    fullName: document.getElementById('fullName').value,
+                    studentId: document.getElementById('studentId').value,
+                    major: document.getElementById('major').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    studyGoals: document.getElementById('studyGoals').value,
+                    studyPriority: document.querySelector('input[name="studyPriority"]:checked').value,
+                    avatar: userData.profile.avatar
+                };
+                
+                saveData();
+                updateUI();
+                
+                // Hiệu ứng thành công
+                saveBtn.innerHTML = '<i class="fas fa-check"></i> Đã lưu!';
+                saveBtn.style.background = '#2ecc71';
+                
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.style.background = '';
+                    saveBtn.disabled = false;
+                }, 1500);
+            }, 800);
+        }
+        
+        // Cập nhật select môn học
+        function updateSubjectSelect() {
+            const select = document.getElementById('subjectSelect');
+            select.innerHTML = '<option value="">Chọn môn học</option>';
+            
+            userData.subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = `${subject.name} ${subject.code ? `(${subject.code})` : ''}`;
+                select.appendChild(option);
+            });
+        }
+        
+        // Cập nhật danh sách môn học trong tab Subjects
+        function updateSubjectsList() {
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = '';
+            
+            if (userData.subjects.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: var(--text-light);">
+                        <i class="fas fa-book" style="font-size: 2em; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>Chưa có môn học nào. Hãy thêm môn học đầu tiên!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            userData.subjects.forEach(subject => {
+                const difficultyText = subject.difficulty === 'easy' ? 'Dễ' :
+                                     subject.difficulty === 'medium' ? 'Trung bình' :
+                                     subject.difficulty === 'hard' ? 'Khó' : 'Rất khó';
+                
+                const difficultyColor = subject.difficulty === 'easy' ? 'green' :
+                                      subject.difficulty === 'medium' ? 'orange' :
+                                      subject.difficulty === 'hard' ? 'red' : 'darkred';
+                
+                const subjectItem = document.createElement('div');
+                subjectItem.className = 'subject-item';
+                subjectItem.style.borderLeftColor = subject.color || '#ff3366';
+                
+                subjectItem.innerHTML = `
+                    <div class="subject-info">
+                        <h4>${subject.name}</h4>
+                        <p>${subject.code ? `Mã: ${subject.code} • ` : ''}Tín chỉ: ${subject.credits} • Độ khó: 
+                        <span style="color: ${difficultyColor}">${difficultyText}</span></p>
+                        ${subject.teacher ? `<p><small>Giảng viên: ${subject.teacher}</small></p>` : ''}
+                    </div>
+                    <div class="subject-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="editSubject(${subject.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="deleteSubject(${subject.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(subjectItem);
+            });
+        }
+        
+        // Reset form thêm/sửa môn học
+        function resetSubjectForm() {
+            document.getElementById('editSubjectName').value = '';
+            document.getElementById('editSubjectCode').value = '';
+            document.getElementById('editSubjectCredits').value = '3';
+            document.getElementById('editSubjectDifficulty').value = 'medium';
+            document.getElementById('editSubjectDescription').value = '';
+            document.getElementById('editSubjectTeacher').value = '';
+            document.getElementById('editSubjectSchedule').value = '';
+            document.getElementById('editSubjectColor').value = '#ff3366';
+            
+            // Reset color picker
+            const colorOptions = document.querySelectorAll('.color-option');
+            colorOptions.forEach(opt => opt.classList.remove('selected'));
+            if (colorOptions.length > 0) {
+                colorOptions[0].classList.add('selected');
+            }
+            
+            document.getElementById('subject-form-title').textContent = 'Thêm môn học mới';
+            editingSubjectId = null;
+        }
+        
+        // Lưu môn học (thêm mới hoặc cập nhật)
+        function saveSubject() {
+            const name = document.getElementById('editSubjectName').value;
+            const code = document.getElementById('editSubjectCode').value;
+            const credits = parseInt(document.getElementById('editSubjectCredits').value);
+            const difficulty = document.getElementById('editSubjectDifficulty').value;
+            const description = document.getElementById('editSubjectDescription').value;
+            const teacher = document.getElementById('editSubjectTeacher').value;
+            const schedule = document.getElementById('editSubjectSchedule').value;
+            const color = document.getElementById('editSubjectColor').value;
+            
+            if (!name) {
+                showMessage("Vui lòng nhập tên môn học!", "error");
+                return;
+            }
+            
+            if (editingSubjectId) {
+                // Cập nhật môn học hiện có
+                const subjectIndex = userData.subjects.findIndex(s => s.id === editingSubjectId);
+                if (subjectIndex !== -1) {
+                    userData.subjects[subjectIndex] = {
+                        ...userData.subjects[subjectIndex],
+                        name: name,
+                        code: code,
+                        credits: credits || 3,
+                        difficulty: difficulty,
+                        description: description,
+                        teacher: teacher,
+                        schedule: schedule,
+                        color: color
+                    };
+                    
+                    showMessage(`Đã cập nhật môn học "${name}" thành công!`, "success");
+                }
+            } else {
+                // Thêm môn học mới
+                const newSubject = {
+                    id: Date.now(),
+                    name: name,
+                    code: code,
+                    credits: credits || 3,
+                    difficulty: difficulty,
+                    description: description,
+                    teacher: teacher,
+                    schedule: schedule,
+                    color: color,
+                    studyHours: 0
+                };
+                
+                userData.subjects.push(newSubject);
+                showMessage(`Đã thêm môn học "${name}" thành công!`, "success");
+            }
+            
+            saveData();
+            updateUI();
+            resetSubjectForm();
+        }
+        
+        // Chỉnh sửa môn học
+        function editSubject(subjectId) {
+            const subject = userData.subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+            
+            document.getElementById('editSubjectName').value = subject.name;
+            document.getElementById('editSubjectCode').value = subject.code || '';
+            document.getElementById('editSubjectCredits').value = subject.credits || 3;
+            document.getElementById('editSubjectDifficulty').value = subject.difficulty || 'medium';
+            document.getElementById('editSubjectDescription').value = subject.description || '';
+            document.getElementById('editSubjectTeacher').value = subject.teacher || '';
+            document.getElementById('editSubjectSchedule').value = subject.schedule || '';
+            
+            // Set color picker
+            const color = subject.color || '#ff3366';
+            document.getElementById('editSubjectColor').value = color;
+            
+            const colorOptions = document.querySelectorAll('.color-option');
+            colorOptions.forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.getAttribute('data-color') === color) {
+                    opt.classList.add('selected');
+                }
+            });
+            
+            document.getElementById('subject-form-title').textContent = 'Chỉnh sửa môn học';
+            editingSubjectId = subjectId;
+            
+            // Scroll to form
+            document.querySelector('.subject-form').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Xóa môn học
+        function deleteSubject(subjectId) {
+            // Kiểm tra xem môn học có đang được sử dụng trong kế hoạch không
+            const usedInPlans = userData.studyPlans.some(p => p.subjectId === subjectId);
+            
+            if (usedInPlans) {
+                showMessage("Không thể xóa môn học này vì đang được sử dụng trong kế hoạch học tập!", "error");
+                return;
+            }
+            
+            if (confirm("Bạn có chắc chắn muốn xóa môn học này?")) {
+                userData.subjects = userData.subjects.filter(s => s.id !== subjectId);
+                saveData();
+                updateUI();
+                
+                if (editingSubjectId === subjectId) {
+                    resetSubjectForm();
+                }
+            }
+        }
+        
+        // Thêm kế hoạch học tập
+        function addStudyPlan() {
+            const subjectId = parseInt(document.getElementById('subjectSelect').value);
+            const date = document.getElementById('studyDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const topic = document.getElementById('studyTopic').value;
+            const priority = document.querySelector('input[name="planPriority"]:checked').value;
+            const notes = document.getElementById('studyNotes').value;
+            
+            if (!subjectId) {
+                showMessage("Vui lòng chọn môn học!", "error");
+                return;
+            }
+            
+            if (!date || !startTime || !endTime) {
+                showMessage("Vui lòng nhập đầy đủ ngày và thời gian!", "error");
+                return;
+            }
+            
+            const newPlan = {
+                id: Date.now(),
+                subjectId: subjectId,
+                date: date,
+                startTime: startTime,
+                endTime: endTime,
+                topic: topic,
+                priority: priority,
+                notes: notes,
+                completed: false
+            };
+            
+            userData.studyPlans.push(newPlan);
+            
+            // Reset form
+            document.getElementById('studyTopic').value = '';
+            document.getElementById('studyNotes').value = '';
+            
+            saveData();
+            updateUI();
+            showMessage("Đã thêm kế hoạch học tập thành công!", "success");
+        }
+        
+        // Cập nhật danh sách kế hoạch học tập
+        function updateStudyPlanList() {
+            const tbody = document.getElementById('study-plan-list');
+            tbody.innerHTML = '';
+            
+            if (userData.studyPlans.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px;">
+                            <p>Chưa có kế hoạch học tập nào. Hãy tạo kế hoạch học tập mới!</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Sắp xếp kế hoạch theo ngày và thời gian
+            const sortedPlans = [...userData.studyPlans].sort((a, b) => {
+                const dateA = new Date(a.date + ' ' + a.startTime);
+                const dateB = new Date(b.date + ' ' + b.startTime);
+                return dateA - dateB;
+            });
+            
+            sortedPlans.forEach(plan => {
+                const subject = userData.subjects.find(s => s.id === plan.subjectId);
+                if (!subject) return;
+                
+                const row = document.createElement('tr');
+                const priorityClass = `priority-${plan.priority}-badge`;
+                const priorityText = plan.priority === 'high' ? 'Cao' : 
+                                    plan.priority === 'medium' ? 'Trung bình' : 'Thấp';
+                
+                row.innerHTML = `
+                    <td><strong>${subject.name}</strong></td>
+                    <td>${formatDate(plan.date)}</td>
+                    <td>${plan.startTime} - ${plan.endTime}</td>
+                    <td>${plan.topic || 'Không có'}</td>
+                    <td><span class="priority-badge ${priorityClass}">${priorityText}</span></td>
+                    <td>
+                        <input type="checkbox" ${plan.completed ? 'checked' : ''} 
+                               onchange="togglePlanComplete(${plan.id})">
+                        ${plan.completed ? '✅ Hoàn thành' : '⏳ Chưa hoàn thành'}
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="deletePlan(${plan.id})" style="padding: 5px 10px; font-size: 14px;">
+                            <i class="fas fa-trash"></i> Xóa
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Tính giờ học cho một môn
+        function calculateStudyHoursForSubject(subjectId) {
+            let totalHours = 0;
+            
+            userData.studyPlans.forEach(plan => {
+                if (plan.subjectId === subjectId && plan.completed) {
+                    const start = parseTime(plan.startTime);
+                    const end = parseTime(plan.endTime);
+                    const hours = (end - start) / (1000 * 60 * 60);
+                    totalHours += hours;
+                }
+            });
+            
+            return totalHours.toFixed(1);
+        }
+        
+        // Parse time string to Date object
+        function parseTime(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const date = new Date();
+            date.setHours(hours, minutes, 0, 0);
+            return date;
+        }
+        
+        // Cập nhật tiến độ
+        function updateProgress() {
+            const container = document.getElementById('progress-container');
+            container.innerHTML = '';
+            
+            // Tính tổng giờ học cho mỗi môn
+            const subjectProgress = userData.subjects.map(subject => {
+                const hours = parseFloat(calculateStudyHoursForSubject(subject.id));
+                return {
+                    name: subject.name,
+                    hours: hours,
+                    target: subject.credits * 10 // Mục tiêu: 10 giờ/tín chỉ
+                };
+            });
+            
+            // Hiển thị progress bars
+            subjectProgress.forEach(item => {
+                const percentage = Math.min(100, (item.hours / item.target) * 100);
+                
+                const progressItem = document.createElement('div');
+                progressItem.className = 'progress-item';
+                progressItem.innerHTML = `
+                    <div class="progress-label">
+                        <span>${item.name}</span>
+                        <span>${item.hours.toFixed(1)} / ${item.target} giờ (${percentage.toFixed(1)}%)</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+                
+                container.appendChild(progressItem);
+            });
+        }
+        
+        // Cập nhật thống kê
+        function updateStats() {
+            // Tính tổng giờ học
+            let totalHours = 0;
+            let completedTasks = 0;
+            
+            userData.studyPlans.forEach(plan => {
+                if (plan.completed) {
+                    completedTasks++;
+                    const start = parseTime(plan.startTime);
+                    const end = parseTime(plan.endTime);
+                    const hours = (end - start) / (1000 * 60 * 60);
+                    totalHours += hours;
+                }
+            });
+            
+            // Tính hiệu suất (dựa trên tỉ lệ hoàn thành)
+            const totalPlans = userData.studyPlans.length;
+            const efficiency = totalPlans > 0 ? (completedTasks / totalPlans) * 100 : 0;
+            
+            // Tính nhiệm vụ còn lại
+            const pendingTasks = totalPlans - completedTasks;
+            
+            // Cập nhật DOM
+            document.getElementById('total-study-hours').textContent = totalHours.toFixed(1);
+            document.getElementById('completed-tasks').textContent = completedTasks;
+            document.getElementById('study-efficiency').textContent = efficiency.toFixed(1);
+            document.getElementById('pending-tasks').textContent = pendingTasks;
+            
+            // Cập nhật trong userData
+            userData.settings.totalStudyHours = totalHours;
+        }
+        
+        // Cập nhật thống kê môn học
+        function updateSubjectStats() {
+            const totalSubjects = userData.subjects.length;
+            const totalCredits = userData.subjects.reduce((sum, subject) => sum + (subject.credits || 0), 0);
+            
+            let hardestSubject = "Chưa có";
+            if (userData.subjects.length > 0) {
+                const hardest = userData.subjects.reduce((prev, current) => {
+                    const prevLevel = getDifficultyLevel(prev.difficulty);
+                    const currentLevel = getDifficultyLevel(current.difficulty);
+                    return currentLevel > prevLevel ? current : prev;
+                });
+                
+                hardestSubject = hardest.name;
+            }
+            
+            document.getElementById('total-subjects').textContent = totalSubjects;
+            document.getElementById('total-credits').textContent = totalCredits;
+            document.getElementById('hardest-subject').textContent = hardestSubject;
+        }
+        
+        // Chuyển độ khó thành số
+        function getDifficultyLevel(difficulty) {
+            switch(difficulty) {
+                case 'easy': return 1;
+                case 'medium': return 2;
+                case 'hard': return 3;
+                case 'very-hard': return 4;
+                default: return 0;
+            }
+        }
+        
+        // Toggle hoàn thành kế hoạch
+        function togglePlanComplete(planId) {
+            const plan = userData.studyPlans.find(p => p.id === planId);
+            if (plan) {
+                plan.completed = !plan.completed;
+                saveData();
+                updateUI();
+            }
+        }
+        
+        // Xóa kế hoạch
+        function deletePlan(planId) {
+            if (confirm("Bạn có chắc chắn muốn xóa kế hoạch học tập này?")) {
+                userData.studyPlans = userData.studyPlans.filter(p => p.id !== planId);
+                saveData();
+                updateUI();
+            }
+        }
+        
+        // Cập nhật streak days
+        function updateStreakDays() {
+            const today = new Date().toDateString();
+            
+            if (!userData.settings.lastLogin) {
+                userData.settings.streakDays = 1;
+            } else {
+                const lastLogin = new Date(userData.settings.lastLogin);
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastLogin.toDateString() === yesterday.toDateString()) {
+                    userData.settings.streakDays++;
+                } else if (lastLogin.toDateString() !== today) {
+                    userData.settings.streakDays = 1;
+                }
+            }
+            
+            userData.settings.lastLogin = new Date().toISOString();
+            document.getElementById('streak-days').textContent = userData.settings.streakDays;
+            
+            // Cập nhật giờ học hôm nay
+            updateTodayStudyHours();
+        }
+        
+        // Cập nhật giờ học hôm nay
+        function updateTodayStudyHours() {
+            const today = new Date().toISOString().split('T')[0];
+            let todayHours = 0;
+            
+            userData.studyPlans.forEach(plan => {
+                if (plan.date === today && plan.completed) {
+                    const start = parseTime(plan.startTime);
+                    const end = parseTime(plan.endTime);
+                    const hours = (end - start) / (1000 * 60 * 60);
+                    todayHours += hours;
+                }
+            });
+            
+            document.getElementById('today-study').textContent = todayHours.toFixed(1);
+        }
+        
+        // Tạo calendar
+        function generateCalendar() {
+            const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                              "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+            
+            // Cập nhật tiêu đề
+            document.getElementById('current-month').textContent = 
+                `${monthNames[currentMonth]}, ${currentYear}`;
+            
+            const calendarEl = document.getElementById('calendar-days');
+            calendarEl.innerHTML = '';
+            
+            // Thêm các ngày trong tuần
+            const daysOfWeek = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+            daysOfWeek.forEach(day => {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+                calendarEl.appendChild(dayEl);
+            });
+            
+            // Tìm ngày đầu tiên của tháng
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const startingDay = firstDay.getDay();
+            
+            // Tìm ngày cuối cùng của tháng
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const totalDays = lastDay.getDate();
+            
+            // Thêm các ô trống trước ngày đầu tiên
+            for (let i = 0; i < startingDay; i++) {
+                const emptyEl = document.createElement('div');
+                emptyEl.className = 'calendar-date';
+                calendarEl.appendChild(emptyEl);
+            }
+            
+            // Thêm các ngày trong tháng
+            for (let day = 1; day <= totalDays; day++) {
+                const dateEl = document.createElement('div');
+                dateEl.className = 'calendar-date';
+                dateEl.textContent = day;
+                
+                // Kiểm tra xem ngày này có kế hoạch học tập không
+                const dateStr = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                const hasStudy = userData.studyPlans.some(plan => plan.date === dateStr);
+                
+                if (hasStudy) {
+                    dateEl.classList.add('has-study');
+                    dateEl.title = "Có kế hoạch học tập";
+                }
+                
+                // Xử lý click
+                dateEl.addEventListener('click', function() {
+                    showStudyPlansForDate(dateStr);
+                });
+                
+                calendarEl.appendChild(dateEl);
+            }
+        }
+        
+        // Hiển thị kế hoạch học tập cho một ngày cụ thể
+        function showStudyPlansForDate(date) {
+            const plans = userData.studyPlans.filter(plan => plan.date === date);
+            
+            if (plans.length === 0) {
+                showMessage(`Không có kế hoạch học tập nào vào ngày ${formatDate(date)}`, "error");
+                return;
+            }
+            
+            let message = `Kế hoạch học tập ngày ${formatDate(date)}:\n\n`;
+            plans.forEach(plan => {
+                const subject = userData.subjects.find(s => s.id === plan.subjectId);
+                if (subject) {
+                    message += `• ${subject.name} (${plan.startTime} - ${plan.endTime}): ${plan.topic || 'Không có chủ đề'}\n`;
+                }
+            });
+            
+            alert(message);
+        }
+        
+        // Chuyển đổi tháng
+        function changeMonth(direction) {
+            currentMonth += direction;
+            
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            
+            generateCalendar();
+        }
+        
+        // Hiển thị tab
+        function showTab(tabName) {
+            // Ẩn tất cả tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Hiển thị tab được chọn
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Kích hoạt tab và nav link tương ứng
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+            document.querySelector(`.nav-menu a[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Thêm câu nói cổ vũ mới khi chuyển tab
+            if (Math.random() > 0.7) {
+                showRandomMotivationalQuote();
+            }
+        }
+        
+        // Xuất dữ liệu
+        function exportData() {
+            const dataStr = JSON.stringify(userData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `study-planner-data-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showMessage("Dữ liệu đã được xuất thành công!", "success");
+        }
+        
+        // Nhập dữ liệu
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        userData = importedData;
+                        saveData();
+                        updateUI();
+                        showMessage("Dữ liệu đã được nhập thành công!", "success");
+                    } catch (error) {
+                        showMessage("Lỗi khi đọc file. Vui lòng kiểm tra định dạng file!", "error");
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        // Đặt lại dữ liệu
+        function resetData() {
+            if (confirm("Bạn có chắc chắn muốn đặt lại tất cả dữ liệu? Hành động này không thể hoàn tác!")) {
+                localStorage.removeItem('studyPlannerData');
+                userData = {
+                    profile: {
+                        avatar: null
+                    },
+                    subjects: [],
+                    studyPlans: [],
+                    progress: {},
+                    settings: {
+                        lastLogin: null,
+                        streakDays: 0,
+                        totalStudyHours: 0
+                    }
+                };
+                
+                // Reset form
+                document.getElementById('fullName').value = '';
+                document.getElementById('studentId').value = '';
+                document.getElementById('major').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('studyGoals').value = '';
+                
+                updateUI();
+                showRandomMotivationalQuote();
+                showMessage("Đã đặt lại dữ liệu thành công!", "success");
+            }
+        }
+        
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('vi-VN');
+        }
+        
+        // Hiển thị modal thêm môn học nhanh
+        function showQuickAddSubject() {
+            document.getElementById('quickAddModal').style.display = 'flex';
+        }
+        
+        // Ẩn modal thêm môn học nhanh
+        function hideQuickAddModal() {
+            document.getElementById('quickAddModal').style.display = 'none';
+            document.getElementById('quickSubjectName').value = '';
+            document.getElementById('quickSubjectCode').value = '';
+        }
+        
+        // Thêm môn học nhanh và chọn nó
+        function addQuickSubject() {
+            const name = document.getElementById('quickSubjectName').value;
+            const code = document.getElementById('quickSubjectCode').value;
+            
+            if (!name) {
+                showMessage("Vui lòng nhập tên môn học!", "error");
+                return;
+            }
+            
+            const newSubject = {
+                id: Date.now(),
+                name: name,
+                code: code,
+                credits: 3,
+                difficulty: "medium",
+                color: "#ff3366",
+                studyHours: 0
+            };
+            
+            userData.subjects.push(newSubject);
+            saveData();
+            updateUI();
+            
+            // Chọn môn học vừa thêm
+            document.getElementById('subjectSelect').value = newSubject.id;
+            
+            hideQuickAddModal();
+            showMessage(`Đã thêm và chọn môn học "${name}"`, "success");
+        }
+    </script>
+</body>
+</html>
